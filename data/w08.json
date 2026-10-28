@@ -1,0 +1,71 @@
+{
+  "week": 8,
+  "title": "Classical ML theory I | Fine-tuning",
+  "objectives": "Explain core algorithms and their trade-offs at whiteboard depth. Know when and how to fine-tune, and when not to. Checkpoint 2 on Day 7.",
+  "exercise": "QLoRA-fine-tune a small open model (3–8B, free Colab/T4-class GPU) to classify transaction descriptions into categories. Compare it with your Week 5 prompt baseline on the same held-out set.",
+  "resources": [
+    "Chip Huyen, Machine Learning Interviews (free online)",
+    "Unsloth Fine-tuning LLMs Guide and LoRA Hyperparameters Guide",
+    "AI Engineering, Ch. 7–8 (fine-tuning, dataset engineering)",
+    "Hugging Face LLM Course (includes RL/GRPO chapter)"
+  ],
+  "units": [
+    { "id": "W8-A1", "track": "A", "title": "Bias–variance & regularization", "concepts": "Bias–variance trade-off, L1/L2, cross-validation, leakage" },
+    { "id": "W8-B1", "track": "B", "title": "When to fine-tune", "concepts": "Prompt → RAG → fine-tune ladder" },
+    { "id": "W8-A2", "track": "A", "title": "Logistic regression", "concepts": "Log-odds, MLE, coefficient interpretation, calibration" },
+    { "id": "W8-B2", "track": "B", "title": "LoRA math", "concepts": "Low-rank adapters, rank, alpha, target modules" },
+    { "id": "W8-A3", "track": "A", "title": "Bagging vs boosting", "concepts": "Trees, random forests, gradient boosting" },
+    { "id": "W8-B3", "track": "B", "title": "QLoRA", "concepts": "4-bit base, NF4, adapters in higher precision, hyperparameters" },
+    { "id": "W8-A4", "track": "A", "title": "Metrics for imbalance", "concepts": "Precision/recall, ROC-AUC vs PR-AUC, thresholds, log loss" },
+    { "id": "W8-B4", "track": "B", "title": "DPO vs GRPO", "concepts": "Preference pairs vs verifiable rewards, forgetting, evaluating fine-tunes" }
+  ],
+  "cards": [
+    { "id": "W8-A1-1", "unit": "W8-A1", "type": "mcq", "q": "Why does L1 produce sparse coefficients?", "choices": ["The L1 ball has corners on the axes, so the optimum often lands where some coefficients are exactly 0", "L1 squares the weights", "L1 is non-convex", "L1 adds noise"], "answer": 0, "explain": "L2's round ball shrinks all weights but rarely to exactly zero." },
+    { "id": "W8-A1-2", "unit": "W8-A1", "type": "mcq", "q": "Training error low, validation error high. Diagnosis and fix?", "choices": ["High variance (overfitting): more data, regularisation, simpler model", "High bias: add features", "Underfitting: train longer", "Data leakage is impossible here"], "answer": 0 },
+    { "id": "W8-A1-3", "unit": "W8-A1", "type": "mcq", "q": "Increasing the regularisation strength λ typically…", "choices": ["Increases bias, decreases variance", "Decreases bias, increases variance", "Decreases both", "Has no effect"], "answer": 0 },
+    { "id": "W8-A1-4", "unit": "W8-A1", "type": "mcq", "q": "Spot the leak: you standardise features using the mean/std of the full dataset, then do 5-fold CV.", "choices": ["Validation-fold statistics leak into training; fit the scaler inside each fold (pipeline)", "No leak: scaling is harmless", "The leak is using 5 folds", "Standardisation is not allowed with CV"], "answer": 0 },
+    { "id": "W8-A1-5", "unit": "W8-A1", "type": "mcq", "q": "With many correlated features, which tends to keep groups of them (shrinking together)?", "choices": ["L2 (ridge) or elastic net", "L1 alone", "No regularisation", "Decision stumps"], "answer": 0 },
+
+    { "id": "W8-A2-1", "unit": "W8-A2", "type": "numeric", "q": "Logistic regression coefficient 0.7 on a binary feature. The odds multiply by what factor when it's 1 vs 0? (2 dp)", "answer": 2.01, "tol": 0.02, "explain": "e^0.7 ≈ 2.01, so the odds roughly double." },
+    { "id": "W8-A2-2", "unit": "W8-A2", "type": "mcq", "q": "Logistic regression is fit by…", "choices": ["Maximum likelihood (minimising log loss)", "Least squares on 0/1 labels", "Gini impurity", "Hinge loss"], "answer": 0 },
+    { "id": "W8-A2-3", "unit": "W8-A2", "type": "mcq", "q": "Logistic regression models…", "choices": ["Log-odds of the positive class as a linear function of features", "The probability as a linear function", "The class label directly", "Distances to support vectors"], "answer": 0 },
+    { "id": "W8-A2-4", "unit": "W8-A2", "type": "mcq", "q": "A model is 'well calibrated' when…", "choices": ["Among cases predicted at 20%, about 20% are positive", "AUC is above 0.9", "Accuracy equals precision", "All predictions are 0 or 1"], "answer": 0 },
+    { "id": "W8-A2-5", "unit": "W8-A2", "type": "mcq", "q": "Perfectly separable training data in unregularised logistic regression causes…", "choices": ["Coefficients diverge to ±∞ (no finite MLE)", "Zero coefficients", "A closed-form solution", "Faster convergence"], "answer": 0 },
+
+    { "id": "W8-A3-1", "unit": "W8-A3", "type": "mcq", "q": "Bagging vs boosting: which primarily reduces variance and which primarily reduces bias?", "choices": ["Bagging reduces variance; boosting reduces bias", "Bagging reduces bias; boosting reduces variance", "Both reduce only variance", "Both reduce only bias"], "answer": 0 },
+    { "id": "W8-A3-2", "unit": "W8-A3", "type": "mcq", "q": "Random forests add what on top of bagging?", "choices": ["A random subset of features at each split, decorrelating trees", "Sequential residual fitting", "Pruning to depth 1", "Gradient descent"], "answer": 0 },
+    { "id": "W8-A3-3", "unit": "W8-A3", "type": "mcq", "q": "Each new tree in gradient boosting fits…", "choices": ["The negative gradient of the loss (residuals for squared error) of the current ensemble", "A bootstrap sample independently", "The original labels", "Random noise"], "answer": 0 },
+    { "id": "W8-A3-4", "unit": "W8-A3", "type": "mcq", "q": "Lowering the learning rate (shrinkage) in XGBoost usually requires…", "choices": ["More trees, often giving better generalisation", "Fewer trees", "Deeper trees only", "Removing regularisation"], "answer": 0 },
+    { "id": "W8-A3-5", "unit": "W8-A3", "type": "mcq", "q": "Why do tree ensembles often beat neural networks on tabular data?", "choices": ["They handle heterogeneous features, missing values and non-linear thresholds well with little tuning", "They have more parameters", "They're always more accurate", "Neural nets can't use tabular data"], "answer": 0 },
+
+    { "id": "W8-A4-1", "unit": "W8-A4", "type": "text", "q": "The fraud rate is 0.1%. Why is ROC-AUC misleading, and what do you report instead?", "answer": "ROC uses the false-positive rate, whose denominator is the huge negative class. A tiny FPR can still mean thousands of false alarms versus a few frauds, so ROC-AUC looks great while precision is poor. Report PR-AUC / average precision, precision and recall at the operating threshold, and cost-weighted metrics (fraud $ caught vs review cost).", "rubric": ["FPR denominator dominated by negatives", "High AUC can coexist with poor precision", "PR-AUC / precision@recall / cost-based metric"] },
+    { "id": "W8-A4-2", "unit": "W8-A4", "type": "numeric", "q": "A fraud model flags 200 transactions; 50 are fraud. There were 100 frauds in total. What is the recall in %?", "answer": 50, "tol": 0.01, "explain": "Recall = 50/100 = 50%. Precision = 50/200 = 25%." },
+    { "id": "W8-A4-3", "unit": "W8-A4", "type": "numeric", "q": "Same model: precision 25%, recall 50%. F1? (decimal, 3 dp)", "answer": 0.333, "tol": 0.002, "explain": "2PR/(P+R) = 2·0.25·0.5/0.75 ≈ 0.333." },
+    { "id": "W8-A4-4", "unit": "W8-A4", "type": "mcq", "q": "With 0.1% positives, a model predicting 'not fraud' for everything has accuracy…", "choices": ["99.9%: accuracy is useless here", "0.1%", "50%", "Undefined"], "answer": 0 },
+    { "id": "W8-A4-5", "unit": "W8-A4", "type": "mcq", "q": "How should you pick the fraud classification threshold?", "choices": ["From business costs: expected fraud loss avoided vs review cost/customer friction, on a validation set", "Always 0.5", "Maximise accuracy", "Maximise ROC-AUC"], "answer": 0 },
+
+    { "id": "W8-B1-1", "unit": "W8-B1", "type": "mcq", "q": "Your model lacks knowledge of last month's policies. Fine-tune or RAG?", "choices": ["RAG", "Fine-tune", "Increase temperature", "Pretrain from scratch"], "answer": 0, "explain": "Knowledge that changes belongs in retrieval; fine-tuning is for behaviour, format and style." },
+    { "id": "W8-B1-2", "unit": "W8-B1", "type": "order", "q": "Order the usual escalation ladder for improving an LLM application.", "items": ["Prompt and context engineering", "RAG / tools for missing knowledge", "Fine-tuning for behaviour, format or cost", "Pretraining/continued pretraining (rarely)"] },
+    { "id": "W8-B1-3", "unit": "W8-B1", "type": "mcq", "q": "Good reason TO fine-tune?", "choices": ["A small model must match a large model's output format and style on a narrow task at lower cost/latency", "Add yesterday's news", "Fix a vague prompt", "You have 20 examples"], "answer": 0 },
+    { "id": "W8-B1-4", "unit": "W8-B1", "type": "mcq", "q": "Before fine-tuning, what must exist?", "choices": ["An eval set and a strong prompt baseline to beat", "A GPU cluster", "A reward model", "Millions of examples"], "answer": 0 },
+    { "id": "W8-B1-5", "unit": "W8-B1", "type": "mcq", "q": "Distillation for LLMs typically means…", "choices": ["Training a smaller model on a larger model's outputs for a task", "Removing layers", "Quantising to 4-bit", "Pruning the vocabulary"], "answer": 0 },
+
+    { "id": "W8-B2-1", "unit": "W8-B2", "type": "numeric", "q": "A 4096×4096 weight with rank-16 LoRA: how many trainable parameters?", "answer": 131072, "tol": 1, "explain": "A is 4096×16, B is 16×4096: 2·4096·16 = 131,072, which is 0.78% of 16.8M." },
+    { "id": "W8-B2-2", "unit": "W8-B2", "type": "mcq", "q": "LoRA's update to a frozen weight W is…", "choices": ["W + (α/r)·B·A with low-rank A (r×k) and B (d×r)", "W replaced by B·A", "W multiplied by a scalar", "A new attention head"], "answer": 0 },
+    { "id": "W8-B2-3", "unit": "W8-B2", "type": "mcq", "q": "Why is B initialised to zero in LoRA?", "choices": ["So the adapter starts as a no-op and training begins from the base model's behaviour", "To save memory", "To make A sparse", "It's random, not zero"], "answer": 0 },
+    { "id": "W8-B2-4", "unit": "W8-B2", "type": "mcq", "q": "Practical advantage of LoRA adapters in serving?", "choices": ["Many small task adapters can share one base model and be swapped or merged", "They remove the need for the base model", "They increase context length", "They make inference free"], "answer": 0 },
+    { "id": "W8-B2-5", "unit": "W8-B2", "type": "mcq", "q": "Applying LoRA to all linear layers (attention + MLP) rather than only Q/V usually…", "choices": ["Improves quality at modest extra cost", "Breaks training", "Has no effect", "Reduces trainable params"], "answer": 0 },
+
+    { "id": "W8-B3-1", "unit": "W8-B3", "type": "mcq", "q": "In QLoRA, what is quantised and what stays in higher precision?", "choices": ["The frozen base weights are 4-bit (NF4); LoRA adapters and computation use 16-bit", "Adapters are 4-bit; base is 16-bit", "Everything is 4-bit", "Only activations are quantised"], "answer": 0 },
+    { "id": "W8-B3-2", "unit": "W8-B3", "type": "mcq", "q": "Main benefit of QLoRA over LoRA?", "choices": ["Much lower GPU memory, so larger models fit on a single small GPU", "Higher accuracy always", "Faster inference always", "No hyperparameters"], "answer": 0 },
+    { "id": "W8-B3-3", "unit": "W8-B3", "type": "numeric", "q": "Unsloth's suggested starting learning rate for LoRA/QLoRA? (e.g. 0.0002)", "answer": 0.0002, "tol": 0.00001, "explain": "2e-4. For DPO/GRPO it's much lower, ~5e-6." },
+    { "id": "W8-B3-4", "unit": "W8-B3", "type": "mcq", "q": "If a well-tuned LoRA fails on your task, will full fine-tuning likely rescue it?", "choices": ["Rarely: revisit the data and task framing first", "Yes, always", "Only with higher temperature", "Only with QLoRA"], "answer": 0 },
+    { "id": "W8-B3-5", "unit": "W8-B3", "type": "mcq", "q": "Sign of overfitting in an SFT run?", "choices": ["Training loss keeps falling while validation loss rises and eval outputs get repetitive", "Both losses fall", "Validation loss falls faster", "Learning rate decays"], "answer": 0 },
+
+    { "id": "W8-B4-1", "unit": "W8-B4", "type": "mcq", "q": "Which needs preference pairs, and which needs a verifiable reward function?", "choices": ["DPO needs preference pairs; GRPO needs a (verifiable) reward function", "GRPO needs pairs; DPO needs rewards", "Both need pairs", "Neither needs data"], "answer": 0 },
+    { "id": "W8-B4-2", "unit": "W8-B4", "type": "mcq", "q": "GRPO estimates advantages by…", "choices": ["Sampling a group of responses per prompt and comparing each reward to the group's mean (no value network)", "Training a critic network", "Using human pairwise labels", "Supervised labels"], "answer": 0 },
+    { "id": "W8-B4-3", "unit": "W8-B4", "type": "mcq", "q": "Good task for GRPO-style RL?", "choices": ["Math or SQL generation where answers can be checked automatically", "Brand voice", "Open-ended poetry", "Classifying sentiment with no labels"], "answer": 0 },
+    { "id": "W8-B4-4", "unit": "W8-B4", "type": "mcq", "q": "Catastrophic forgetting means…", "choices": ["Fine-tuning degrades capabilities the model had before (general skills)", "The model forgets the prompt", "Weights are deleted", "Adapters stop loading"], "answer": 0 },
+    { "id": "W8-B4-5", "unit": "W8-B4", "type": "mcq", "q": "How should you evaluate a fine-tune?", "choices": ["Against the base model and the prompt baseline on the same held-out task eval, plus a general-capability regression check", "Training loss only", "Ask the fine-tuned model if it improved", "Leaderboard rank"], "answer": 0 }
+  ]
+}
