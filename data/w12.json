@@ -1,0 +1,42 @@
+{
+  "week": 12,
+  "title": "Integration: Capstone build",
+  "objectives": "Combine both tracks in one portfolio-grade project: ship-and-measure a fintech AI assistant. Checkpoint 3 on Day 7.",
+  "exercise": "Capstone: (1) Build a RAG assistant over public fintech policy docs with hybrid retrieval + reranking, structured citations and one tool (ideally an MCP server). (2) Evaluate it: error analysis on 100+ queries, a failure taxonomy, code assertions plus a human-validated LLM judge, and evals in CI. (3) Optional: a QLoRA intent router vs prompting. (4) Write the launch experiment design: primary metric, guardrails, randomisation unit, CUPED power analysis, SRM check, group sequential plan, DiD fallback. (5) Write a 2-page ML system design doc.",
+  "resources": [
+    "Your Week 5–10 notes and builds",
+    "Deng et al. 2013 (CUPED)",
+    "Husain & Shankar, AI Evals FAQ"
+  ],
+  "units": [
+    { "id": "W12-A1", "track": "A", "title": "Re-derive CUPED", "concepts": "θ, variance reduction, sizing with CUPED" },
+    { "id": "W12-B1", "track": "B", "title": "Eval suite review", "concepts": "Judge TPR/TNR, CI evals, failure taxonomy" },
+    { "id": "W12-A2", "track": "A", "title": "Experiment-audit drill", "concepts": "Find the flaws in a launch plan" },
+    { "id": "W12-B2", "track": "B", "title": "RAG ablation reading", "concepts": "Ablations: no reranker, no hybrid search, chunking" }
+  ],
+  "cards": [
+    { "id": "W12-A1-1", "unit": "W12-A1", "type": "numeric", "q": "Cov(Y, X) = 45, Var(X) = 60. Compute θ for CUPED.", "answer": 0.75, "tol": 0.001 },
+    { "id": "W12-A1-2", "unit": "W12-A1", "type": "numeric", "q": "Var(Y) = 100, Var(X) = 60, Cov(Y, X) = 45. Variance of the CUPED-adjusted Y? (1 dp)", "answer": 66.25, "tol": 0.1, "explain": "Var(Y) − Cov²/Var(X) = 100 − 2025/60 = 100 − 33.75 = 66.25." },
+    { "id": "W12-A1-3", "unit": "W12-A1", "type": "numeric", "q": "Pre-period contact rate correlates 0.6 with in-test contact rate. Required n with CUPED as a fraction of n without? (decimal)", "answer": 0.64, "tol": 0.01, "explain": "1 − ρ² = 1 − 0.36 = 0.64." },
+    { "id": "W12-A1-4", "unit": "W12-A1", "type": "mcq", "q": "For the assistant launch, which CUPED covariate is valid?", "choices": ["Each user's support contact rate in the 4 weeks before the experiment", "Contacts during the experiment", "Whether the user saw the assistant", "Post-launch CSAT"], "answer": 0 },
+    { "id": "W12-A1-5", "unit": "W12-A1", "type": "text", "q": "Derive why CUPED's θ = Cov(Y,X)/Var(X) minimises variance.", "answer": "Var(Y − θX) = Var(Y) − 2θ·Cov(Y,X) + θ²·Var(X). Take the derivative w.r.t. θ: −2Cov + 2θVar(X) = 0, so θ = Cov(Y,X)/Var(X). Plug it back in: Var = Var(Y) − Cov²/Var(X) = Var(Y)(1 − ρ²).", "rubric": ["Expands Var(Y − θX)", "Differentiates and sets to zero", "Gets Var(Y)(1 − ρ²)"] },
+
+    { "id": "W12-A2-1", "unit": "W12-A2", "type": "text", "q": "Find 5 flaws: 'We'll launch the AI assistant to users who opt in, compare their contact rate to non-opt-ins for 1 week, check daily, stop when significant, and also report CSAT, resolution, latency, cost and escalation for each of 10 countries.'", "answer": "1) Opt-in is self-selection, not randomisation, so it's confounded. 2) 1 week misses the weekly cycle and novelty effects. 3) Daily peeking with stop-on-significance inflates Type I error. 4) No pre-specified primary metric: 5 metrics × 10 countries is a multiple-testing problem. 5) No power analysis or SRM check. 6) No guardrail thresholds (escalation, cost). 7) Interference: support-agent capacity is shared.", "rubric": ["Self-selection / no randomisation", "Too short / novelty", "Peeking", "Multiple testing / no primary metric", "No sizing / SRM / guardrail thresholds"] },
+    { "id": "W12-A2-2", "unit": "W12-A2", "type": "mcq", "q": "Best randomisation unit for the support assistant test?", "choices": ["User (account), so each customer sees a consistent experience", "Message", "Conversation turn", "Support agent"], "answer": 0 },
+    { "id": "W12-A2-3", "unit": "W12-A2", "type": "mcq", "q": "Best primary metric for the assistant launch?", "choices": ["Self-serve resolution rate (issues resolved without human contact)", "Messages sent to the bot", "Bot response length", "Number of sessions"], "answer": 0 },
+    { "id": "W12-A2-4", "unit": "W12-A2", "type": "mcq", "q": "Randomisation is blocked by legal in some regions. Fallback design?", "choices": ["Staggered regional rollout analysed with DiD (check pre-trends)", "Compare before/after with no control", "Opt-in comparison", "Skip measurement"], "answer": 0 },
+    { "id": "W12-A2-5", "unit": "W12-A2", "type": "mcq", "q": "You plan 4 weekly looks. Which monitoring plan?", "choices": ["Group sequential test with an alpha spending function (e.g. O'Brien–Fleming)", "Check p < 0.05 each week", "No interim looks ever, even for guardrails", "Bayesian with no prior specified"], "answer": 0 },
+
+    { "id": "W12-B1-1", "unit": "W12-B1", "type": "text", "q": "What is your judge's TPR/TNR, and how did you measure it?", "answer": "Hand-label a held-out test set of traces (not used for prompt iteration) for the specific failure mode. Run the judge on them. TPR = fails caught / true fails; TNR = passes correctly passed / true passes. Report both with sample sizes, and iterate on the dev split only.", "rubric": ["Human labels on a held-out test split", "TPR and TNR defined correctly", "Didn't tune on the test set"] },
+    { "id": "W12-B1-2", "unit": "W12-B1", "type": "mcq", "q": "Which failure modes belong in the CI eval suite?", "choices": ["The top modes from your error-analysis taxonomy, plus regressions you've fixed before", "Every generic metric available", "Only latency", "Only examples the model passes"], "answer": 0 },
+    { "id": "W12-B1-3", "unit": "W12-B1", "type": "numeric", "q": "Judge test set: 30 true fails, 70 true passes. The judge catches 24 fails and wrongly fails 7 passes. TNR in %?", "answer": 90, "tol": 0.01, "explain": "TNR = 63/70 = 90%. TPR = 24/30 = 80%." },
+    { "id": "W12-B1-4", "unit": "W12-B1", "type": "mcq", "q": "After shipping a prompt change, the CI eval pass rate dropped from 92% to 88% on 100 cases. First step?", "choices": ["Read the newly failing traces to see whether it's a real regression or judge noise", "Revert immediately without looking", "Ignore: it's within noise always", "Retrain the judge"], "answer": 0 },
+    { "id": "W12-B1-5", "unit": "W12-B1", "type": "mcq", "q": "Where should the eval for 'cites a source for every policy claim' live?", "choices": ["A code assertion (citation format/IDs present) plus a judge for whether the citation supports the claim", "Only human review", "Only a judge for tone", "Nowhere"], "answer": 0 },
+
+    { "id": "W12-B2-1", "unit": "W12-B2", "type": "text", "q": "Which ablation (no reranker / no hybrid search) hurt most, and why?", "answer": "Answer from your own results. Typical pattern: removing hybrid search hurts most on queries with exact identifiers (regulation numbers, fee codes) because dense retrieval misses them. Removing the reranker hurts most on broad questions where the right chunk was in the top-50 but not the top-5. Back it with recall@k and end-to-end pass rate per query type.", "rubric": ["Names the ablation with numbers", "Explains via query types", "Uses retrieval and end-to-end metrics"] },
+    { "id": "W12-B2-2", "unit": "W12-B2", "type": "mcq", "q": "Why run ablations at all?", "choices": ["To show which components earn their cost and latency, and justify the design", "To make the README longer", "To lower accuracy", "They're required by MCP"], "answer": 0 },
+    { "id": "W12-B2-3", "unit": "W12-B2", "type": "mcq", "q": "Removing the reranker barely changes end-to-end quality but cuts latency 40%. Decision?", "choices": ["Drop it (or use it only for hard queries): it isn't earning its cost", "Keep it regardless", "Add two rerankers", "Increase top-k to 100"], "answer": 0 },
+    { "id": "W12-B2-4", "unit": "W12-B2", "type": "mcq", "q": "To attribute a failure to retrieval vs generation in ablations, measure…", "choices": ["Retrieval recall@k and end-to-end correctness separately", "Only end-to-end correctness", "Only latency", "Token count"], "answer": 0 },
+    { "id": "W12-B2-5", "unit": "W12-B2", "type": "mcq", "q": "Ablation results differ by query type. How should you report them?", "choices": ["Sliced by query type (exact-ID, conceptual, multi-hop, unanswerable)", "One overall number", "Only the best slice", "Not at all"], "answer": 0 }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "week": 13,
+  "title": "Capstone finish, mock loop, consolidation",
+  "objectives": "Finish and present the capstone, simulate a full interview loop, and lock in long-term retention.",
+  "exercise": "Days 1–3: finish the capstone, write a README (recommendation → evals → experiment plan), and record a 5-minute walkthrough. Days 4–5: full mock loop: SQL 45m, stats/experimentation 45m, product case 45m, ML system design 45m, behavioral 30m, scored against a rubric. Day 6: re-queue units behind every gap. Day 7: final spaced-repetition sweep.",
+  "resources": [
+    "Your capstone repo",
+    "Checkpoint results in this app (Stats → weakest units)"
+  ],
+  "units": [
+    { "id": "W13-A1", "track": "A", "title": "Mock-loop debrief", "concepts": "Rubric scoring, gap analysis, remediation" },
+    { "id": "W13-B1", "track": "B", "title": "Capstone architecture recall", "concepts": "Explain your system end to end" },
+    { "id": "W13-A2", "track": "A", "title": "Experimentation lightning round", "concepts": "Rapid recall across Weeks 2–6" },
+    { "id": "W13-B2", "track": "B", "title": "Frontier recap", "concepts": "Workflow vs agent, DPO vs GRPO, MCP primitives" }
+  ],
+  "cards": [
+    { "id": "W13-A1-1", "unit": "W13-A1", "type": "text", "q": "What are your top 3 weak areas from the mock loop, and which units will you re-queue?", "answer": "Personal answer: list the 3 lowest-scoring rubric dimensions, map each to unit IDs (check Stats → Weakest units), and schedule them.", "rubric": ["Three specific gaps", "Mapped to unit IDs", "A concrete plan/date"] },
+    { "id": "W13-A1-2", "unit": "W13-A1", "type": "order", "q": "Order the full mock loop as planned.", "items": ["SQL (45 min)", "Stats & experimentation (45 min)", "Product case (45 min)", "ML system design (45 min)", "Behavioral (30 min)"] },
+    { "id": "W13-A1-3", "unit": "W13-A1", "type": "mcq", "q": "Best way to score a mock round?", "choices": ["Against a written rubric per dimension (structure, correctness, communication), recorded right after", "Overall gut feel", "Only whether you finished", "Ask a friend if it 'felt good'"], "answer": 0 },
+    { "id": "W13-A1-4", "unit": "W13-A1", "type": "mcq", "q": "When is a card 'mastered' in this curriculum?", "choices": ["3 consecutive correct answers at expanding intervals", "1 correct answer", "After 13 weeks automatically", "When you mark it easy"], "answer": 0 },
+    { "id": "W13-A1-5", "unit": "W13-A1", "type": "mcq", "q": "After the 13 weeks, the maintenance deck should take about…", "choices": ["~10 minutes a day", "2 hours a day", "Nothing: stop reviewing", "1 hour a week, all on Sunday"], "answer": 0 },
+
+    { "id": "W13-A2-1", "unit": "W13-A2", "type": "numeric", "q": "Lightning: halve the MDE. Factor change in n?", "answer": 4, "tol": 0.01 },
+    { "id": "W13-A2-2", "unit": "W13-A2", "type": "numeric", "q": "Lightning: ρ = 0.8 between pre and post. CUPED variance remaining (%)?", "answer": 36, "tol": 0.5, "explain": "1 − 0.64 = 0.36." },
+    { "id": "W13-A2-3", "unit": "W13-A2", "type": "mcq", "q": "Lightning: SRM detected. Do you analyse the metric?", "choices": ["No: find the cause first", "Yes, with a caveat", "Yes, after re-weighting", "Only the guardrails"], "answer": 0 },
+    { "id": "W13-A2-4", "unit": "W13-A2", "type": "mcq", "q": "Lightning: no randomisation, one treated region, many untreated regions, long pre-period. Method?", "choices": ["Synthetic control", "Regression discontinuity", "Simple before/after", "Instrumental variable"], "answer": 0 },
+    { "id": "W13-A2-5", "unit": "W13-A2", "type": "mcq", "q": "Lightning: rider pricing test in a shared driver pool. Design?", "choices": ["Switchback or geo randomisation", "User-level randomisation", "Opt-in", "Session-level"], "answer": 0 },
+    { "id": "W13-A2-6", "unit": "W13-A2", "type": "numeric", "q": "Lightning: 20 tests at α = 0.05, all null. Expected false positives?", "answer": 1, "tol": 0.01 },
+
+    { "id": "W13-B1-1", "unit": "W13-B1", "type": "text", "q": "Explain your capstone architecture in 60 seconds.", "answer": "Personal answer. A strong version covers: ingestion and chunking of the policy docs → hybrid retrieval (BM25 + dense) → reranker → LLM with citations → one tool via MCP → tracing → eval suite (assertions + validated judge) in CI → launch experiment (unit, primary metric, guardrails, CUPED, GST, DiD fallback) → monitoring.", "rubric": ["Data → retrieval → generation → tool", "Evals and how the judge was validated", "How launch impact will be measured", "Monitoring/feedback loop"] },
+    { "id": "W13-B1-2", "unit": "W13-B1", "type": "order", "q": "Order the capstone request path.", "items": ["User query", "Query rewriting", "Hybrid retrieval (BM25 + dense)", "Reranking", "LLM generation with citations (calling tools if needed)", "Trace logged for evals/monitoring"] },
+    { "id": "W13-B1-3", "unit": "W13-B1", "type": "mcq", "q": "Your README should lead with…", "choices": ["The recommendation/result, then evals, then the experiment plan", "Installation steps", "A list of libraries", "Your learning journey"], "answer": 0 },
+    { "id": "W13-B1-4", "unit": "W13-B1", "type": "mcq", "q": "An interviewer asks how you'd know the assistant is getting worse in production. Answer?", "choices": ["Sampled traces scored by validated judges, guardrail dashboards (escalation, cost, latency), user feedback, drift in query mix", "Training loss", "We'd hear complaints eventually", "Monthly manual check only"], "answer": 0 },
+    { "id": "W13-B1-5", "unit": "W13-B1", "type": "mcq", "q": "Why expose the fee calculator as a tool instead of letting the LLM compute fees?", "choices": ["Deterministic, auditable arithmetic; LLMs can make calculation errors", "Tools are cheaper to write", "LLMs can't do any maths", "MCP requires it"], "answer": 0 },
+
+    { "id": "W13-B2-1", "unit": "W13-B2", "type": "mcq", "q": "Recap: fixed-step monthly report. Workflow or agent?", "choices": ["Workflow", "Agent"], "answer": 0 },
+    { "id": "W13-B2-2", "unit": "W13-B2", "type": "mcq", "q": "Recap: DPO needs ___; GRPO needs ___.", "choices": ["preference pairs; a (verifiable) reward function", "a reward function; preference pairs", "labels; nothing", "nothing; labels"], "answer": 0 },
+    { "id": "W13-B2-3", "unit": "W13-B2", "type": "text", "q": "Recap: MCP's three server primitives?", "answer": "Tools, Resources, Prompts.", "rubric": ["Tools", "Resources", "Prompts"] },
+    { "id": "W13-B2-4", "unit": "W13-B2", "type": "mcq", "q": "Recap: knowledge that changes monthly. Fine-tune or RAG?", "choices": ["RAG", "Fine-tune"], "answer": 0 },
+    { "id": "W13-B2-5", "unit": "W13-B2", "type": "mcq", "q": "Recap: judge agreement 95% on 5% failure prevalence. Check?", "choices": ["TPR/TNR on the failure class", "Accuracy only", "BLEU", "Perplexity"], "answer": 0 }
+  ]
+}

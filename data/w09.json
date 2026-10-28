@@ -1,0 +1,72 @@
+{
+  "week": 9,
+  "title": "Classical ML II (applied) | Agents & tool use",
+  "objectives": "Cover the applied ML problems big-tech DS roles face. Build an agent and know when an agent is the wrong tool.",
+  "exercise": "Build a 'data analyst agent' with two tools, run_sql (DuckDB, read-only) and plot, that answers questions over your Week 1 dataset. Log traces, then run a 30-question eval with pass/fail checks on SQL correctness.",
+  "resources": [
+    "Machine Learning Interviews (Huyen)",
+    "Designing Machine Learning Systems (Huyen, 2022): features & training data chapters",
+    "Anthropic, Building effective agents",
+    "DeepLearning.AI, Agentic AI (Andrew Ng)",
+    "Hugging Face AI Agents Course"
+  ],
+  "units": [
+    { "id": "W9-A1", "track": "A", "title": "Clustering & PCA", "concepts": "k-means assumptions, scaling, PCA, choosing k" },
+    { "id": "W9-B1", "track": "B", "title": "Workflow vs agent", "concepts": "Predefined paths vs model-directed control, simplest solution first" },
+    { "id": "W9-A2", "track": "A", "title": "Recommenders", "concepts": "Collaborative filtering, two-tower retrieval + ranking, NDCG" },
+    { "id": "W9-B2", "track": "B", "title": "The five workflow patterns", "concepts": "Chaining, routing, parallelisation, orchestrator–workers, evaluator–optimizer" },
+    { "id": "W9-A3", "track": "A", "title": "Forecasting", "concepts": "Seasonality, backtesting, time-based CV, leakage" },
+    { "id": "W9-B3", "track": "B", "title": "MCP", "concepts": "Model Context Protocol: tools, resources, prompts; JSON-RPC; trust" },
+    { "id": "W9-A4", "track": "A", "title": "Fraud & anomaly", "concepts": "Delayed labels, imbalance, anomaly detection, SHAP, uplift" },
+    { "id": "W9-B4", "track": "B", "title": "Agent evals & security", "concepts": "Trajectory vs outcome evaluation, tool permissions, cost" }
+  ],
+  "cards": [
+    { "id": "W9-A1-1", "unit": "W9-A1", "type": "mcq", "q": "Why standardise features before k-means and PCA?", "choices": ["Both use distances/variance, so large-scale features (e.g. amount in $) would dominate", "To make them normal", "To remove outliers", "It's not needed"], "answer": 0 },
+    { "id": "W9-A1-2", "unit": "W9-A1", "type": "mcq", "q": "k-means implicitly assumes clusters that are…", "choices": ["Roughly spherical, similar size, separable by distance to centroid", "Arbitrary shapes", "Hierarchical", "Density-connected"], "answer": 0, "explain": "For arbitrary shapes, consider DBSCAN or GMMs." },
+    { "id": "W9-A1-3", "unit": "W9-A1", "type": "mcq", "q": "PCA's first principal component is…", "choices": ["The direction of maximum variance in the (centred) data", "The most predictive feature", "The feature with the largest mean", "A cluster centroid"], "answer": 0 },
+    { "id": "W9-A1-4", "unit": "W9-A1", "type": "mcq", "q": "A common heuristic for choosing k in k-means?", "choices": ["Elbow in within-cluster SSE and/or silhouette score, validated by business usefulness", "Always k = 3", "k = number of features", "Maximise SSE"], "answer": 0 },
+    { "id": "W9-A1-5", "unit": "W9-A1", "type": "numeric", "q": "Eigenvalues of a 3-feature covariance matrix: 6, 3, 1. What share of variance does PC1 explain (%)?", "answer": 60, "tol": 0.01, "explain": "6 / (6+3+1) = 60%." },
+
+    { "id": "W9-A2-1", "unit": "W9-A2", "type": "mcq", "q": "Why split recommendation into candidate retrieval and ranking stages?", "choices": ["Cheap retrieval narrows millions of items to hundreds; an expensive ranker then scores only those within the latency budget", "Ranking can't run on GPUs", "To avoid cold start entirely", "Regulations require it"], "answer": 0 },
+    { "id": "W9-A2-2", "unit": "W9-A2", "type": "mcq", "q": "A two-tower model…", "choices": ["Embeds users and items separately, so item embeddings can be precomputed and searched with ANN", "Uses two decision trees", "Scores every user–item pair with cross features", "Is a sequence model only"], "answer": 0 },
+    { "id": "W9-A2-3", "unit": "W9-A2", "type": "mcq", "q": "Cold start for a new merchant with no interactions. Mitigation?", "choices": ["Content/metadata features (cuisine, price, location) and exploration boosts", "Wait for data", "Use collaborative filtering only", "Remove the merchant"], "answer": 0 },
+    { "id": "W9-A2-4", "unit": "W9-A2", "type": "mcq", "q": "NDCG rewards…", "choices": ["Relevant items placed higher in the list (graded relevance, log-discounted by position)", "Only whether any relevant item appears", "Diversity", "Click-through rate"], "answer": 0 },
+    { "id": "W9-A2-5", "unit": "W9-A2", "type": "mcq", "q": "Feedback loop risk in recommenders?", "choices": ["The model only learns from items it chose to show, reinforcing popularity bias", "Users click randomly", "Labels are too clean", "Latency increases"], "answer": 0 },
+
+    { "id": "W9-A3-1", "unit": "W9-A3", "type": "mcq", "q": "Why is random k-fold CV wrong for time series?", "choices": ["It trains on the future to predict the past (leakage) and breaks temporal dependence; use rolling-origin backtests", "It uses too little data", "It's too slow", "It's fine for time series"], "answer": 0 },
+    { "id": "W9-A3-2", "unit": "W9-A3", "type": "mcq", "q": "Spot the leak: forecasting daily volume using a 7-day centred moving average as a feature.", "choices": ["The centred window uses future days; use trailing windows only", "Moving averages are always leaky", "No leak", "The leak is the 7"], "answer": 0 },
+    { "id": "W9-A3-3", "unit": "W9-A3", "type": "mcq", "q": "Simple strong baseline for daily transaction volume with weekly seasonality?", "choices": ["Seasonal naive: same weekday last week", "Overall mean", "Random walk with no seasonality", "Zero"], "answer": 0 },
+    { "id": "W9-A3-4", "unit": "W9-A3", "type": "mcq", "q": "Why is MAPE problematic for low-volume series?", "choices": ["Division by small or zero actuals explodes the error; consider MAE, WAPE or sMAPE", "It's always biased upward by 2×", "It ignores large errors", "It can't be computed"], "answer": 0 },
+    { "id": "W9-A3-5", "unit": "W9-A3", "type": "mcq", "q": "Forecast for Hari Raya / Chinese New Year spikes. Best approach?", "choices": ["Explicit holiday features (moving dates) learned from past years", "Ignore them as outliers", "Use a longer moving average", "Use random CV"], "answer": 0 },
+
+    { "id": "W9-A4-1", "unit": "W9-A4", "type": "text", "q": "Labels arrive 60 days late (chargebacks). How does that affect training and monitoring?", "answer": "Training: the most recent 60 days are unlabelled or look like false negatives, so exclude immature data or model label maturity, which means the model learns from older patterns. Monitoring: you can't measure precision/recall in real time. Use proxies (score distribution drift, alert rates, early signals like customer disputes, manual review outcomes) and backfill true performance later.", "rubric": ["Recent data immature → exclude or treat carefully", "Model trained on stale patterns", "Real-time performance unknown → proxy metrics / drift / review labels"] },
+    { "id": "W9-A4-2", "unit": "W9-A4", "type": "mcq", "q": "Isolation Forest flags anomalies because…", "choices": ["Anomalies are isolated in fewer random splits (short path lengths)", "They have the largest mean", "They cluster tightly", "They have labels"], "answer": 0 },
+    { "id": "W9-A4-3", "unit": "W9-A4", "type": "mcq", "q": "Fraudsters adapt after your model launches. This is…", "choices": ["Adversarial concept drift: monitor and retrain frequently", "Data leakage", "Covariate shift only", "Label noise"], "answer": 0 },
+    { "id": "W9-A4-4", "unit": "W9-A4", "type": "mcq", "q": "SHAP values explain…", "choices": ["Each feature's additive contribution to one prediction relative to a baseline", "Global accuracy", "Causal effects", "Hyperparameter importance"], "answer": 0, "explain": "SHAP is not causal." },
+    { "id": "W9-A4-5", "unit": "W9-A4", "type": "mcq", "q": "Uplift modelling targets…", "choices": ["Users whose outcome changes most because of treatment (persuadables), not just who's likely to convert", "Highest-probability converters", "Random users", "Users with the most data"], "answer": 0 },
+
+    { "id": "W9-B1-1", "unit": "W9-B1", "type": "mcq", "q": "A monthly report with fixed steps: workflow or agent?", "choices": ["Workflow", "Agent"], "answer": 0, "explain": "Predefined code paths are cheaper, more predictable and easier to test." },
+    { "id": "W9-B1-2", "unit": "W9-B1", "type": "mcq", "q": "Anthropic's definition: an agent is a system where…", "choices": ["The LLM dynamically directs its own process and tool use", "Several LLM calls run in a fixed order", "A human approves every step", "Any chatbot"], "answer": 0 },
+    { "id": "W9-B1-3", "unit": "W9-B1", "type": "mcq", "q": "When is an agent appropriate?", "choices": ["Open-ended tasks where the number of steps can't be predicted and you can trust/verify the model's choices", "Every task", "Fixed ETL pipelines", "Single classification calls"], "answer": 0 },
+    { "id": "W9-B1-4", "unit": "W9-B1", "type": "mcq", "q": "Main costs of agents vs workflows?", "choices": ["Higher latency and cost, compounding errors, harder to test", "Lower quality always", "They can't use tools", "None"], "answer": 0 },
+    { "id": "W9-B1-5", "unit": "W9-B1", "type": "mcq", "q": "The 'augmented LLM' building block is…", "choices": ["An LLM enhanced with retrieval, tools and memory", "A larger model", "A fine-tuned model", "An LLM with higher temperature"], "answer": 0 },
+
+    { "id": "W9-B2-1", "unit": "W9-B2", "type": "mcq", "q": "Which pattern fits 'generate SQL, run it, critique the result, revise'?", "choices": ["Evaluator–optimizer", "Routing", "Parallelisation", "Prompt chaining"], "answer": 0 },
+    { "id": "W9-B2-2", "unit": "W9-B2", "type": "mcq", "q": "Classify a support ticket, then send it to a specialised prompt per category. Pattern?", "choices": ["Routing", "Orchestrator–workers", "Evaluator–optimizer", "Parallelisation"], "answer": 0 },
+    { "id": "W9-B2-3", "unit": "W9-B2", "type": "mcq", "q": "Run three independent guardrail checks simultaneously and combine them. Pattern?", "choices": ["Parallelisation (sectioning/voting)", "Routing", "Prompt chaining", "Evaluator–optimizer"], "answer": 0 },
+    { "id": "W9-B2-4", "unit": "W9-B2", "type": "mcq", "q": "A central LLM breaks a task into subtasks it decides at runtime, delegates them, then synthesises. Pattern?", "choices": ["Orchestrator–workers", "Prompt chaining", "Routing", "Parallelisation"], "answer": 0 },
+    { "id": "W9-B2-5", "unit": "W9-B2", "type": "mcq", "q": "Outline → check outline meets criteria → write document. Pattern?", "choices": ["Prompt chaining (with a gate)", "Routing", "Orchestrator–workers", "Parallelisation"], "answer": 0 },
+
+    { "id": "W9-B3-1", "unit": "W9-B3", "type": "text", "q": "Name MCP's three server primitives.", "answer": "Tools (model-invoked actions), Resources (data/context the application can read), Prompts (reusable templates the user can invoke).", "rubric": ["Tools", "Resources", "Prompts"] },
+    { "id": "W9-B3-2", "unit": "W9-B3", "type": "mcq", "q": "MCP messages use which protocol format?", "choices": ["JSON-RPC 2.0", "gRPC protobuf only", "GraphQL", "SOAP"], "answer": 0 },
+    { "id": "W9-B3-3", "unit": "W9-B3", "type": "mcq", "q": "What problem does MCP solve?", "choices": ["A standard way to connect any AI app to any tool/data source instead of N×M bespoke integrations", "Model training", "Tokenization", "Vector search"], "answer": 0 },
+    { "id": "W9-B3-4", "unit": "W9-B3", "type": "mcq", "q": "How should tool descriptions from an untrusted MCP server be treated?", "choices": ["As untrusted input: they can carry prompt injection, so review servers and scope permissions", "As trusted system instructions", "As user messages with full authority", "They can't contain text"], "answer": 0 },
+    { "id": "W9-B3-5", "unit": "W9-B3", "type": "mcq", "q": "For your capstone, a read-only SQL lookup exposed via MCP is a…", "choices": ["Tool", "Resource", "Prompt", "Sampling request"], "answer": 0, "explain": "A static schema document could be exposed as a Resource." },
+
+    { "id": "W9-B4-1", "unit": "W9-B4", "type": "mcq", "q": "Why evaluate the tool-call trajectory, not just the final answer?", "choices": ["A right answer can come from a wrong or unsafe path (lucky guess, extra costly calls, risky actions), and trajectory errors pinpoint what to fix", "Final answers can't be evaluated", "Trajectories are shorter", "It's cheaper"], "answer": 0 },
+    { "id": "W9-B4-2", "unit": "W9-B4", "type": "mcq", "q": "Your data agent's run_sql tool should connect with…", "choices": ["A read-only role scoped to allowed schemas, plus query timeouts and row limits", "Admin credentials", "The same credentials as the app", "No auth"], "answer": 0 },
+    { "id": "W9-B4-3", "unit": "W9-B4", "type": "mcq", "q": "A pass/fail check for 'SQL correctness' in your agent eval should compare…", "choices": ["The query's result set to a reference result (not the SQL text)", "SQL string equality", "Query length", "Whether it ran without error only"], "answer": 0 },
+    { "id": "W9-B4-4", "unit": "W9-B4", "type": "mcq", "q": "Main cost risk of multi-agent systems?", "choices": ["Token usage multiplies across agents; use them only when the parallelism/value justifies it", "They use fewer tokens", "They can't call tools", "They require fine-tuning"], "answer": 0 },
+    { "id": "W9-B4-5", "unit": "W9-B4", "type": "mcq", "q": "Stopping condition every agent loop needs?", "choices": ["Max steps/budget limits plus a clear completion criterion", "None: let it run", "Temperature 0", "A larger context window"], "answer": 0 }
+  ]
+}
