@@ -16,7 +16,7 @@
   ],
   "cards": [
     { "id": "W12-A1-1", "unit": "W12-A1", "type": "numeric", "q": "Cov(Y, X) = 45, Var(X) = 60. Compute θ for CUPED.", "answer": 0.75, "tol": 0.001 },
-    { "id": "W12-A1-2", "unit": "W12-A1", "type": "numeric", "q": "Var(Y) = 100, Var(X) = 60, Cov(Y, X) = 45. Variance of the CUPED-adjusted Y? (1 dp)", "answer": 66.25, "tol": 0.1, "explain": "Var(Y) − Cov²/Var(X) = 100 − 2025/60 = 100 − 33.75 = 66.25." },
+    { "id": "W12-A1-2", "unit": "W12-A1", "type": "numeric", "q": "Var(Y) = 100, Var(X) = 60, Cov(Y, X) = 45. Variance of the CUPED-adjusted Y? (2 dp)", "answer": 66.25, "tol": 0.1, "explain": "Var(Y) − Cov²/Var(X) = 100 − 2025/60 = 100 − 33.75 = 66.25." },
     { "id": "W12-A1-3", "unit": "W12-A1", "type": "numeric", "q": "Pre-period contact rate correlates 0.6 with in-test contact rate. Required n with CUPED as a fraction of n without? (decimal)", "answer": 0.64, "tol": 0.01, "explain": "1 − ρ² = 1 − 0.36 = 0.64." },
     { "id": "W12-A1-4", "unit": "W12-A1", "type": "mcq", "q": "For the assistant launch, which CUPED covariate is valid?", "choices": ["Each user's support contact rate in the 4 weeks before the experiment", "Contacts during the experiment", "Whether the user saw the assistant", "Post-launch CSAT"], "answer": 0 },
     { "id": "W12-A1-5", "unit": "W12-A1", "type": "text", "q": "Derive why CUPED's θ = Cov(Y,X)/Var(X) minimises variance.", "answer": "Var(Y − θX) = Var(Y) − 2θ·Cov(Y,X) + θ²·Var(X). Take the derivative w.r.t. θ: −2Cov + 2θVar(X) = 0, so θ = Cov(Y,X)/Var(X). Plug it back in: Var = Var(Y) − Cov²/Var(X) = Var(Y)(1 − ρ²).", "rubric": ["Expands Var(Y − θX)", "Differentiates and sets to zero", "Gets Var(Y)(1 − ρ²)"] },
