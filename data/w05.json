@@ -11,7 +11,7 @@
     "Anthropic, Building effective agents (Dec 2024)"
   ],
   "units": [
-    { "id": "W5-A1", "track": "A", "title": "CUPED mechanics", "concepts": "θ = Cov(Y,X)/Var(X), variance reduction 1 − ρ²" },
+    { "id": "W5-A1", "track": "A", "title": "CUPED mechanics", "concepts": "θ = Cov(Y,X)/Var(X); adjusted variance = (1 − ρ²)·Var(Y), so the reduction is ρ²" },
     { "id": "W5-B1", "track": "B", "title": "Prompt anatomy", "concepts": "Role, task, context, examples, output format, versioning" },
     { "id": "W5-A2", "track": "A", "title": "CUPED pitfalls", "concepts": "Pre-period covariates, new users, regression equivalence" },
     { "id": "W5-B2", "track": "B", "title": "Structured outputs", "concepts": "JSON schemas, enums, nulls, validation" },
@@ -52,7 +52,7 @@
     { "id": "W5-B1-4", "unit": "W5-B1", "type": "mcq", "q": "Why version prompts?", "choices": ["Prompts are code: each change should be tracked and tied to eval results so regressions can be traced", "APIs require version numbers", "To save tokens", "To randomise outputs"], "answer": 0 },
     { "id": "W5-B1-5", "unit": "W5-B1", "type": "mcq", "q": "For long-document Q&A, where is it usually better to put the question?", "choices": ["After the documents, at the end of the prompt", "Before the documents only", "In a separate API call", "Nowhere: just include the documents"], "answer": 0 },
 
-    { "id": "W5-B2-1", "unit": "W5-B2", "type": "mcq", "q": "Why use a schema-constrained output instead of 'please respond in JSON'?", "choices": ["Constrained decoding guarantees parseable output matching the schema; plain instructions can fail", "It's cheaper", "It improves factual accuracy", "It's required for temperature 0"], "answer": 0 },
+    { "id": "W5-B2-1", "unit": "W5-B2", "type": "mcq", "q": "Why use a schema-constrained output instead of 'please respond in JSON'?", "choices": ["Constrained decoding guarantees output matching the schema (barring truncation at max tokens or refusals); plain instructions can fail", "It's cheaper", "It improves factual accuracy", "It's required for temperature 0"], "answer": 0 },
     { "id": "W5-B2-2", "unit": "W5-B2", "type": "mcq", "q": "A schema-valid output can still be wrong because…", "choices": ["The schema guarantees format, not that the values are correct", "Schemas are optional", "JSON can't hold numbers", "It can't be wrong"], "answer": 0 },
     { "id": "W5-B2-3", "unit": "W5-B2", "type": "mcq", "q": "Best schema type for a 'category' field with 12 known categories?", "choices": ["An enum of the 12 values", "Free-text string", "Integer", "Array of strings"], "answer": 0 },
     { "id": "W5-B2-4", "unit": "W5-B2", "type": "mcq", "q": "The transaction text has no merchant. What should the schema allow?", "choices": ["merchant: null (nullable), so the model doesn't invent one", "A required non-empty string", "The literal 'unknown merchant' only", "Drop the field from the schema"], "answer": 0 },
@@ -65,7 +65,7 @@
     { "id": "W5-B3-5", "unit": "W5-B3", "type": "mcq", "q": "A support agent can issue refunds. Best guardrail?", "choices": ["Human/rule-based approval above a threshold and scoped tool permissions", "A longer system prompt", "Higher temperature", "Disabling logging"], "answer": 0 },
 
     { "id": "W5-B4-1", "unit": "W5-B4", "type": "mcq", "q": "How does context engineering differ from prompt engineering?", "choices": ["It's the runtime curation of the full token payload (system prompt, retrieved data, tools, memory, history), not just the instruction wording", "It's the same thing", "It's about model fine-tuning", "It means using longer prompts"], "answer": 0 },
-    { "id": "W5-B4-2", "unit": "W5-B4", "type": "mcq", "q": "'Context rot' refers to…", "choices": ["Quality degrading as the context fills with irrelevant or excessive content (e.g. huge tool lists)", "Tokens expiring", "Model weights decaying", "Cached prompts going stale"], "answer": 0 },
+    { "id": "W5-B4-2", "unit": "W5-B4", "type": "mcq", "q": "'Context rot' refers to…", "choices": ["Performance degrading as input length grows, even on simple tasks, and more so with distractors or low query–target similarity", "Tokens expiring", "Model weights decaying", "Cached prompts going stale"], "answer": 0 },
     { "id": "W5-B4-3", "unit": "W5-B4", "type": "mcq", "q": "An agent has 80 tool definitions and picks wrong tools often. Best first move?", "choices": ["Load only the tools relevant to the current task (routing / dynamic tool selection)", "Add 20 more tools", "Raise temperature", "Increase max tokens"], "answer": 0 },
     { "id": "W5-B4-4", "unit": "W5-B4", "type": "mcq", "q": "A long-running chat is nearing the context limit. Common strategy?", "choices": ["Summarise/compact older turns and retrieve relevant memory on demand", "Truncate the system prompt", "Start a new model", "Switch to a larger tokenizer"], "answer": 0 },
     { "id": "W5-B4-5", "unit": "W5-B4", "type": "mcq", "q": "Do tool definitions consume context-window tokens?", "choices": ["Yes: names, descriptions and schemas are part of the input", "No, they're free", "Only when the tool is called", "Only in streaming mode"], "answer": 0 }
