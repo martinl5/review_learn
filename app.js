@@ -1,4 +1,5 @@
 import { grade, isDue, accuracy, DAY, MISS, PARTLY, RIGHT } from './srs.js';
+import { calc } from './calc.js';
 
 const KEY = 'ds-two-track-v1';
 const WEEKS = 13;
@@ -126,17 +127,21 @@ function runQuiz(cards, title, onDone) {
         ans.append(b);
       }
     } else if (c.type === 'numeric') {
-      ans.innerHTML = `<form><input type="number" step="any" inputmode="decimal" required aria-label="Answer">
-        <button class="primary">Check</button></form>`;
-      const f = ans.querySelector('form');
-      f.querySelector('input').focus();
+      ans.innerHTML = `<form><input type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+        required aria-label="Answer" placeholder="e.g. 0.135 or exp(-2)">
+        <button class="primary">Check</button><p class="hint calc" aria-live="polite"></p></form>`;
+      const f = ans.querySelector('form'), inp = f.querySelector('input'), out = f.querySelector('.calc');
+      const fmt = x => +x.toPrecision(6);
+      inp.focus();
+      inp.oninput = () => { const x = calc(inp.value); out.textContent = Number.isFinite(x) ? `= ${fmt(x)}` : ''; };
       f.onsubmit = e => {
         e.preventDefault();
-        const x = parseFloat(f.querySelector('input').value);
+        const x = calc(inp.value);
+        if (!Number.isFinite(x)) { out.textContent = "Can't read that. Try e.g. 1-0.95^20 or sqrt(2)/2."; return; }
         const ok = Math.abs(x - c.answer) <= c.tol;
         f.querySelectorAll('input,button').forEach(x => (x.disabled = true));
         record(c, ok ? RIGHT : MISS);
-        feedback(el, c, ok, `<p>Answer: <b>${c.answer}</b> (±${c.tol})</p>`);
+        feedback(el, c, ok, `<p>You: <b>${fmt(x)}</b> · Answer: <b>${c.answer}</b> (±${c.tol})</p>`);
       };
     } else if (c.type === 'order') {
       const picked = [];
