@@ -9,7 +9,7 @@ This is an offline-first microlearning PWA for a 13-week, two-track data science
 - 96 units (`W{week}-{track}{n}`) with 484 cards. Every quiz item in the curriculum is included, plus about 4 extra cards per unit.
 - Card types:
   - multiple choice ("spot the bug" items are MCQ);
-  - numeric with a tolerance;
+  - numeric with a tolerance. The answer box doubles as a calculator: type `1-0.95^20`, `exp(-2)` or `sqrt(2)/2` (supports `+ - * / ^ ( )`, `sqrt exp ln log`, `pi e`);
   - ordering (tap the steps in order);
   - free text, which you self-grade against a rubric (Missed / Partly / Got it).
 - **Today** builds each day's session: due reviews first, then the next 4 units, alternating Track A and Track B. On Day 7 it suggests a week review, and it shows the weekend build with a done checkbox.

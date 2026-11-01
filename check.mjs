@@ -3,6 +3,7 @@
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import { grade, isDue, BOXES, MAINTENANCE_DAYS, DAY, MISS, PARTLY, RIGHT } from './srs.js';
+import { calc } from './calc.js';
 
 // ---- content ----
 const weeks = Array.from({ length: 13 }, (_, i) =>
@@ -98,5 +99,14 @@ for (let k = 0; k < 10; k++) s = grade(s, RIGHT, t0);
 assert.equal(s.box, BOXES.length - 1, 'box capped');
 assert.ok(isDue({ due: 5 }, 5) && !isDue({ due: 6 }, 5) && !isDue(undefined, 5));
 
-const byType = [...cards.values()].reduce((m, c) => ((m[c.type] = (m[c.type] || 0) + 1), m), {});
+// ---- calc (numeric answer box) ----
+const near = (a, b) => Math.abs(a - b) < 1e-9;
+assert.ok(near(calc('1-0.95^20'), 1 - 0.95 ** 20) && near(calc('exp(-2)'), Math.exp(-2)));
+assert.ok(near(calc('sqrt(2)/2'), Math.SQRT1_2) && near(calc('ln(e)'), 1) && near(calc('2*pi'), 2 * Math.PI));
+assert.equal(calc('2^3^2'), 512); assert.equal(calc('-2^2'), -4); assert.equal(calc('2**3'), 8);
+assert.equal(calc('0.135'), 0.135); assert.equal(calc(' 14,100 '), 14100); assert.equal(calc('1e-4'), 0.0001);
+assert.equal(calc('(1+2)×3−1'), 8); assert.equal(calc('-.5'), -0.5);
+for (const bad of ['', '2+', '(1', 'alert(1)', 'sqrt 4', '1..2', 'x']) assert.ok(Number.isNaN(calc(bad)), `calc(${bad})`);
+
+const byType =[...cards.values()].reduce((m, c) => ((m[c.type] = (m[c.type] || 0) + 1), m), {});
 console.log(`OK: ${weeks.length} weeks, ${units.size} units, ${cards.size} cards`, byType);

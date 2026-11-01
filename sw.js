@@ -1,7 +1,7 @@
 // Network-first so content edits show up when online; cache fallback for offline.
 // ponytail: one cache, refreshed on every successful fetch. Bump VERSION to drop stale files.
-const VERSION = 'v1';
-const FILES = ['./', 'index.html', 'app.js', 'srs.js', 'style.css', 'manifest.webmanifest', 'icon.svg',
+const VERSION = 'v2';
+const FILES = ['./', 'index.html', 'app.js', 'srs.js', 'calc.js', 'style.css', 'manifest.webmanifest', 'icon.svg',
   ...Array.from({ length: 13 }, (_, i) => `data/w${String(i + 1).padStart(2, '0')}.json`)];
 
 self.addEventListener('install', e => {
